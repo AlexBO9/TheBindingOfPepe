@@ -1,12 +1,16 @@
 class Soldier {
-    constructor(pos,r,gun,slide) {
+    constructor(name,pos,r,gun,slide,maxHp) {
+        this.name = name;
         this.pos = pos;
         this.r = r;
         this.velocity = createVector(0, 0);
         this.force = 2;
         this.slide = slide;
         this.gun = gun;
-        this.hp = 100;
+        this.maxHp = maxHp;
+        this.hp = maxHp;
+        this.kills = 0;
+        this.deaths = 0;
     }
 
     update() {
@@ -34,6 +38,7 @@ class Soldier {
 
         this.velocity.lerp(newVel, this.slide);
         this.pos.add(this.velocity);
+
     }
 
     changeVel() {
@@ -51,6 +56,12 @@ class Soldier {
     show() {
         fill(255);
         ellipse(this.pos.x, this.pos.y, this.r * 2, this.r * 2);
+
+        fill(255, 0, 0);
+        rect(this.pos.x - this.r, this.pos.y - this.r / 2, this.r * 2, this.r / 2);
+        fill(0, 255, 0);
+        var lifeWidth = map(this.hp, 0, this.maxHp, 0, this.r * 2);
+        rect(this.pos.x - this.r, this.pos.y - this.r / 2, lifeWidth, this.r / 2);
     }
 
     constrain() {
