@@ -7,8 +7,5 @@ class Proyectile {
         this.r = r;
     }
 
-    update() {
-        this.x += this.xVel;
-        this.y += this.yVel;
-    }
+
 }

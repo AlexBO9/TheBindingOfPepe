@@ -32,7 +32,7 @@ var socket = require('socket.io');
 
 var io = socket(server);
 
-setInterval(sync, 20);
+setInterval(sync, 10);
 
 function collissions() {
     for (let i = 0; i < soldiers.length; i++) {
@@ -67,13 +67,26 @@ function updateProyectiles() {
             proyectileSel.y += proyectileSel.yVel;
             if (proyectileSel.x < 0 - proyectileSel.r || proyectileSel.x > screenWidth + proyectileSel.x || proyectileSel.y < 0 - proyectileSel.r || proyectileSel.y > screenHeight + proyectileSel.y) {
                 soldierSel.gun.proyectiles.splice(j, 1);
+            } else if (Math.abs(proyectileSel.xVel) + Math.abs(proyectileSel.yVel) < 2) {
+                soldierSel.gun.proyectiles.splice(j, 1);
+            } else {
+                if (proyectileSel.xVel < 0) {
+                    proyectileSel.xVel += 0.1;
+                } else {
+                    proyectileSel.xVel -= 0.1;
+                }
+                if (proyectileSel.yVel < 0) {
+                    proyectileSel.yVel += 0.1
+                }else{
+                    proyectileSel.yVel -= 0.1
+                }
             }
         }
     }
-    collissions();
 }
 
 function sync() {
+    collissions();
     updateProyectiles();
     io.sockets.emit('sync', soldiers);
     //io.sockets.emit('syncShots', shots);
@@ -119,7 +132,9 @@ function newConnection(socket) {
     function shootUpd(data) {
         for (let i = 0; i < soldiers.length; i++) {
             if (soldiers[i].id == socket.id) {
-                soldiers[i].gun.proyectiles.push(data.proyectile);
+                for (let j = 0; j < data.proyectile.length; j++) {
+                    soldiers[i].gun.proyectiles.push(data.proyectile[j]);
+                }
                 break;
             }
         }

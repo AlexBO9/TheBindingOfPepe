@@ -8,11 +8,39 @@ function setup() {
     background(0);
     frameRate(60);
 
+    var guns = [
+        {
+            "name": "P90",
+            "dmg": 15,
+            "force": 8,
+            "calibre": 8,
+            "shootTime": 10
+        },
+        {
+            "name": "Modelo1889",
+            "dmg": 5,
+            "force": 8,
+            "calibre": 4,
+            "shootTime": 30,
+            "pellets": 8,
+            "dispersion": 2
+        }
+    ]
     var username = getCookie("username");
-    var gunNum = getCookie("gun");
-
+    var gunNum = parseInt(getCookie("gunNum"));
+    var gun;
     localDeaths = 0;
-    var gun = new Gun("p90", 10, 8, 10, 15);
+    switch (gunNum) {
+        case 0:
+            gun = new Submachine(guns[0].name, guns[0].dmg, guns[0].force, guns[0].calibre, guns[0].shootTime);
+            break;
+        case 1:
+            gun = new Shotgun(guns[1].name, guns[1].dmg, guns[1].force, guns[1].calibre, guns[1].shootTime, guns[1].pellets, guns[1].dispersion);
+            break;
+        default:
+            gun = new Submachine(guns[0].name, guns[0].dmg, guns[0].force, guns[0].calibre, guns[0].shootTime);
+            break;
+    }
     var pos = createVector(random(width), random(height));
     var fortitude = random(30) + 10;
     soldier = new Soldier(username, pos, fortitude, gun, 0.1, fortitude * 4);
@@ -104,7 +132,7 @@ function sendPosUpdate() {
 function shootGun() {
     soldier.gun.update(soldier.pos, soldier.velocity);
     var proyectile = soldier.gun.shotProyectile;
-    if (proyectile != null) {
+    if (proyectile.length > 0) {
         var data = {
             proyectile: proyectile
         }
