@@ -1,12 +1,16 @@
 var soldiers = [];
 var screenWidth = 1000;
 var screenHeight = 650;
+var PROY_DRAG = 0.05;
+var MIN_PROY_VEL = 0.8;
 
-function Soldier(id, name, x, y, r, gun, maxHp) {
+function Soldier(id, name, x, y, xVel, yVel, r, gun, maxHp) {
     this.id = id;
     this.name = name;
     this.x = x;
     this.y = y;
+    this.xVel = xVel;
+    this.yVel = yVel;
     this.r = r;
     this.gun = gun;
     this.maxHp = maxHp;
@@ -42,7 +46,9 @@ function collissions() {
             if (soldierPri.id != soldierSec.id) {
                 for (let k = 0; k < soldiers[j].gun.proyectiles.length; k++) {
                     var proyectileSel = soldierSec.gun.proyectiles[k];
-                    if (dist(soldierPri.x, soldierPri.y, proyectileSel.x, proyectileSel.y) < soldierPri.r + proyectileSel.r) {
+                    if (dist( (soldierPri.x+soldierPri.xVel), (soldierPri.y+soldierPri.yVel),
+                    (proyectileSel.x+proyectileSel.xVel), (proyectileSel.y+proyectileSel.yVel))
+                    < soldierPri.r + proyectileSel.r) {
                         soldierPri.hp -= soldierSec.gun.dmg;
                         if (soldierPri.hp <= 0) {
                             soldierPri.hp = soldierPri.maxHp;
@@ -67,18 +73,18 @@ function updateProyectiles() {
             proyectileSel.y += proyectileSel.yVel;
             if (proyectileSel.x < 0 - proyectileSel.r || proyectileSel.x > screenWidth + proyectileSel.x || proyectileSel.y < 0 - proyectileSel.r || proyectileSel.y > screenHeight + proyectileSel.y) {
                 soldierSel.gun.proyectiles.splice(j, 1);
-            } else if (Math.abs(proyectileSel.xVel) + Math.abs(proyectileSel.yVel) < 2) {
+            } else if (Math.abs(proyectileSel.xVel) + Math.abs(proyectileSel.yVel) < MIN_PROY_VEL) {
                 soldierSel.gun.proyectiles.splice(j, 1);
             } else {
                 if (proyectileSel.xVel < 0) {
-                    proyectileSel.xVel += 0.1;
+                    proyectileSel.xVel += PROY_DRAG;
                 } else {
-                    proyectileSel.xVel -= 0.1;
+                    proyectileSel.xVel -= PROY_DRAG;
                 }
                 if (proyectileSel.yVel < 0) {
-                    proyectileSel.yVel += 0.1
+                    proyectileSel.yVel += PROY_DRAG;
                 }else{
-                    proyectileSel.yVel -= 0.1
+                    proyectileSel.yVel -= PROY_DRAG;
                 }
             }
         }
@@ -100,8 +106,8 @@ function newConnection(socket) {
     socket.on('start', posMsg);
 
     function posMsg(data) {
-        soldiers.push(new Soldier(socket.id, data.name, data.x, data.y, data.r, data.gun, data.maxHp));
-        console.log('{ ' + socket.id + ' X: ' + data.x + ' Y: ' + data.y + " r:" + data.r + " Gun: " + data.gun.name + " HP: " + data.maxHp + " }");
+        soldiers.push(new Soldier(socket.id, data.name, data.x, data.y, data.xVel, data.yVel, data.r, data.gun, data.maxHp));
+        console.log('{ ' + socket.id + ' X: ' + data.x + ' Y: ' + data.y + ' xVel: ' + data.xVel + ' yVel: ' + data.yVel + " r:" + data.r + " Gun: " + data.gun.name + " HP: " + data.maxHp + " }");
     }
 
     socket.on('update', posUpd);
@@ -116,6 +122,8 @@ function newConnection(socket) {
                 soldier = soldiers[i];
                 soldier.x = data.x;
                 soldier.y = data.y;
+                soldier.xVel = data.xVel;
+                soldier.yVel = data.yVel;
                 soldier.r = data.r;
                 //soldier.hp = data.hp;
                 soldier.gun.dmg = data.gun.dmg;

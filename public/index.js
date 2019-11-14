@@ -10,7 +10,8 @@ function envia() {
     var gunNum = document.getElementById("gunNum").value;
     setCookie("username",username,1);
     setCookie("gunNum",gunNum,1);
-    window.location.assign("http://192.168.14.122:3000/game.html");
+
+    window.location.assign("http://"+window.location.hostname+":"+window.location.port+"/game.html");
 }
 
 function setCookie(cname, cvalue, exdays) {

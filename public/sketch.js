@@ -4,7 +4,7 @@ let soldier;
 let localDeaths;
 
 function setup() {
-    createCanvas(1000, 650);
+    createCanvas(window.innerWidth*0.9, window.innerHeight*0.9);
     background(0);
     frameRate(60);
 
@@ -86,7 +86,7 @@ function managePlayers() {
             fill(255, 0, 0);
             rect(soldiers[i].x - soldiers[i].r, soldiers[i].y - soldiers[i].r / 2, soldiers[i].r * 2, soldiers[i].r / 2);
 
-            //Draw red life
+            //Draw green life
             fill(0, 255, 0);
             var lifeWidth = map(soldiers[i].hp, 0, soldiers[i].maxHp, 0, soldiers[i].r * 2);
             rect(soldiers[i].x - soldiers[i].r, soldiers[i].y - soldiers[i].r / 2, lifeWidth, soldiers[i].r / 2);
@@ -109,6 +109,8 @@ function sendPosSetup() {
         name: soldier.name,
         x: soldier.pos.x,
         y: soldier.pos.y,
+        xVel: soldier.velocity.x,
+        yVel: soldier.velocity.y,
         r: soldier.r,
         gun: soldier.gun,
         maxHp: soldier.maxHp
@@ -121,6 +123,8 @@ function sendPosUpdate() {
         name: soldier.name,
         x: soldier.pos.x,
         y: soldier.pos.y,
+        xVel: soldier.velocity.x,
+        yVel: soldier.velocity.y,
         r: soldier.r,
         gun: soldier.gun,
         maxHp: soldier.maxp
