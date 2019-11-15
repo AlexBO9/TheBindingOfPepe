@@ -4,7 +4,7 @@ let soldier;
 let localDeaths;
 
 function setup() {
-    createCanvas(window.innerWidth*0.9, window.innerHeight*0.9);
+    createCanvas(1000, 650);
     background(0);
     frameRate(60);
 

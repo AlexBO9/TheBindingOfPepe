@@ -1,8 +1,14 @@
 var soldiers = [];
 var screenWidth = 1000;
 var screenHeight = 650;
-var PROY_DRAG = 0.05;
-var MIN_PROY_VEL = 0.8;
+
+var lastUpdate = Date.now();
+var deltaTime = lastUpdate-Date.now();
+
+var PROY_DRAG = 0.0;
+var MIN_PROY_VEL = 0.2;
+
+
 
 function Soldier(id, name, x, y, xVel, yVel, r, gun, maxHp) {
     this.id = id;
@@ -71,20 +77,20 @@ function updateProyectiles() {
             const proyectileSel = soldierSel.gun.proyectiles[j];
             proyectileSel.x += proyectileSel.xVel;
             proyectileSel.y += proyectileSel.yVel;
-            if (proyectileSel.x < 0 - proyectileSel.r || proyectileSel.x > screenWidth + proyectileSel.x || proyectileSel.y < 0 - proyectileSel.r || proyectileSel.y > screenHeight + proyectileSel.y) {
+            if (proyectileSel.x < 0 - proyectileSel.r || proyectileSel.x > screenWidth + proyectileSel.r || proyectileSel.y < 0 - proyectileSel.r || proyectileSel.y > screenHeight + proyectileSel.r) {
                 soldierSel.gun.proyectiles.splice(j, 1);
             } else if (Math.abs(proyectileSel.xVel) + Math.abs(proyectileSel.yVel) < MIN_PROY_VEL) {
                 soldierSel.gun.proyectiles.splice(j, 1);
             } else {
                 if (proyectileSel.xVel < 0) {
-                    proyectileSel.xVel += PROY_DRAG;
+                    proyectileSel.xVel += PROY_DRAG * deltaTime;
                 } else {
-                    proyectileSel.xVel -= PROY_DRAG;
+                    proyectileSel.xVel -= PROY_DRAG * deltaTime;
                 }
                 if (proyectileSel.yVel < 0) {
-                    proyectileSel.yVel += PROY_DRAG;
+                    proyectileSel.yVel += PROY_DRAG * deltaTime;
                 }else{
-                    proyectileSel.yVel -= PROY_DRAG;
+                    proyectileSel.yVel -= PROY_DRAG * deltaTime;
                 }
             }
         }
@@ -92,9 +98,14 @@ function updateProyectiles() {
 }
 
 function sync() {
+    var now = Date.now();
+    deltaTime = now-lastUpdate;
+
     collissions();
     updateProyectiles();
     io.sockets.emit('sync', soldiers);
+
+    lastUpdate = Date.now();
     //io.sockets.emit('syncShots', shots);
 }
 

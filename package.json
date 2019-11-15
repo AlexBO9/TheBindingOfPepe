@@ -4,6 +4,7 @@
   "description": "A game made for fun",
   "dependencies": {
     "express": "^4.15.2",
+    "nodemon": "^1.19.4",
     "socket.io": "^2.2.0"
   }
 }
