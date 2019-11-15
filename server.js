@@ -5,7 +5,7 @@ var screenHeight = 650;
 var lastUpdate = Date.now();
 var deltaTime = lastUpdate-Date.now();
 
-var PROY_DRAG = 0.0;
+var PROY_DRAG = 0.01;
 var MIN_PROY_VEL = 0.2;
 
 
@@ -75,8 +75,8 @@ function updateProyectiles() {
         const soldierSel = soldiers[i];
         for (let j = 0; j < soldierSel.gun.proyectiles.length; j++) {
             const proyectileSel = soldierSel.gun.proyectiles[j];
-            proyectileSel.x += proyectileSel.xVel;
-            proyectileSel.y += proyectileSel.yVel;
+            proyectileSel.x += proyectileSel.xVel * deltaTime;
+            proyectileSel.y += proyectileSel.yVel * deltaTime;
             if (proyectileSel.x < 0 - proyectileSel.r || proyectileSel.x > screenWidth + proyectileSel.r || proyectileSel.y < 0 - proyectileSel.r || proyectileSel.y > screenHeight + proyectileSel.r) {
                 soldierSel.gun.proyectiles.splice(j, 1);
             } else if (Math.abs(proyectileSel.xVel) + Math.abs(proyectileSel.yVel) < MIN_PROY_VEL) {
